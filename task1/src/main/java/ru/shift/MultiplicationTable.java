@@ -1,6 +1,10 @@
 package ru.shift;
 
 import java.util.InputMismatchException;
+import java.util.Scanner;
+
+import static ru.shift.Constants.MAX_TABLE_SIZE;
+import static ru.shift.Constants.MIN_TABLE_SIZE;
 
 public class MultiplicationTable {
     private int tableSize;
@@ -8,7 +12,7 @@ public class MultiplicationTable {
 
     public MultiplicationTable() {
         try {
-            this.tableSize = new ReaderParameter().readTableSize();
+            this.tableSize = readTableSize();
             this.table = new int[tableSize + 1][tableSize + 1];
             createMultiplicationTable();
         } catch (InputMismatchException e) {
@@ -30,6 +34,19 @@ public class MultiplicationTable {
 
     public void setTable(int[][] table) {
         this.table = table;
+    }
+
+    private int readTableSize() {
+        int tableSize;
+        do {
+            System.out.println("Введите целочисленное значение " + MIN_TABLE_SIZE + " <= n <= " + MAX_TABLE_SIZE);
+            Scanner scanner = new Scanner(System.in);
+            tableSize = scanner.nextInt();
+            if (tableSize < MIN_TABLE_SIZE || tableSize > MAX_TABLE_SIZE) {
+                System.out.println("Введенное значение не является допустимым: выход за рамки диапазона.");
+            }
+        } while (tableSize < MIN_TABLE_SIZE || tableSize > MAX_TABLE_SIZE);
+        return tableSize;
     }
 
     void createMultiplicationTable() {
