@@ -2,13 +2,13 @@ package ru.shift;
 
 import java.io.PrintWriter;
 
-public class Main {
+import static ru.shift.ReaderParameterUtils.readTableSize;
 
+public class Main {
     public static void main(String[] args) {
-        MultiplicationTable multiplicationTable = new MultiplicationTable();
-        FormattedTableOutput formattedTableOutput = new FormattedTableOutput(multiplicationTable.getTableSize());
+        int tableSize = readTableSize();
         try (PrintWriter writer = new PrintWriter(System.out)) {
-            formattedTableOutput.printMultiplicationTable(multiplicationTable, writer);
+            new FormattedTableOutput(tableSize).printMultiplicationTable(new MultiplicationTable(tableSize), writer);
         }
     }
 }

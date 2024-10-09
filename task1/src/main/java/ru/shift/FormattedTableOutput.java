@@ -1,35 +1,35 @@
 package ru.shift;
 
 import java.io.PrintWriter;
-
 import static ru.shift.Constants.*;
 
-public class FormattedTableOutput {
-    String stringDelimiter;
-    int minFieldWidth;
-    int maxFieldWidth;
+class FormattedTableOutput {
+    private final String stringDelimiter;
+    private final int minFieldWidth;
+    private final int maxFieldWidth;
+    private final String format;
 
-    public FormattedTableOutput(int tableSize) {
+    FormattedTableOutput(int tableSize) {
         this.minFieldWidth = String.valueOf(tableSize).length();
         this.maxFieldWidth = String.valueOf(tableSize * tableSize).length();
         this.stringDelimiter = createDelimiter(tableSize);
+        this.format = "%" + maxFieldWidth + "d%s";
     }
 
-    String createDelimiter(int tableSize) {
+    private String createDelimiter(int tableSize) {
         int differenceMaxMinFieldWidth = maxFieldWidth - minFieldWidth;
 
         String zeroDelimiter = SPACE.repeat(differenceMaxMinFieldWidth) + MINUS.repeat(minFieldWidth);
         String singleDelimiter = PLUS + MINUS.repeat(maxFieldWidth);
-        //int capacity = differenceMaxMinFieldWidth + minFieldWidth + singleDelimiter.length() * tableSize;
 
         return zeroDelimiter + singleDelimiter.repeat(tableSize);
     }
 
-    void printHeadMultiplicationTable(int tableSize, PrintWriter writer) {
-        System.out.print(SPACE.repeat(maxFieldWidth) + "|");
+    private void printHeadMultiplicationTable(int tableSize, PrintWriter writer) {
+        writer.print(SPACE.repeat(maxFieldWidth) + "|");
         for (int i = 1; i <= tableSize; i++) {
             String valueDelimiter = (i == tableSize) ? "\n" : "|";
-            writer.printf("%" + maxFieldWidth + "d%s", i, valueDelimiter);
+            writer.printf(format, i, valueDelimiter);
         }
         writer.println(stringDelimiter);
     }
@@ -41,8 +41,7 @@ public class FormattedTableOutput {
         for (int i = 1; i <= tableSize; i++) {
             for (int j = 0; j <= tableSize; j++) {
                 String valueDelimiter = (j == tableSize) ? "\n" : "|";
-
-                writer.printf("%" + maxFieldWidth + "d%s", table[i][j], valueDelimiter);
+                writer.printf(format, table[i][j], valueDelimiter);
             }
             writer.println(stringDelimiter);
         }
