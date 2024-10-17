@@ -1,4 +1,7 @@
-package ru.shift;
+package ru.shift.figure.typeFigure;
+
+import ru.shift.figure.Figure;
+import ru.shift.figure.FigureName;
 
 import java.util.List;
 
@@ -11,22 +14,31 @@ public class Triangle extends Figure {
 
     public Triangle(FigureName nameFigure, List<Double> listParameter) {
         super(nameFigure);
-        this.sideA = listParameter.get(0);
-        this.sideC = listParameter.get(1);
-        this.sideB = listParameter.get(2);
-        perimeterFigure = calculatePerimeterFigure();
-        areaFigure = calculateAreaFigure();
+        if (checkingSideTriangle(listParameter)) {
+            this.sideA = listParameter.get(0);
+            this.sideB = listParameter.get(1);
+            this.sideC = listParameter.get(2);
+        } else {
+            throw new IllegalArgumentException("Не выполнено условие существование треугольника: сумма двух сторон больше третьей стороны.");
+        }
+    }
+
+    static public boolean checkingSideTriangle(List<Double> paramList) {
+        return (paramList.get(0) + paramList.get(1) > paramList.get(2)) &&
+                (paramList.get(0) + paramList.get(2) > paramList.get(1)) &&
+                (paramList.get(1) + paramList.get(2) > paramList.get(0));
     }
 
     @Override
-    double calculatePerimeterFigure() {
+    public double calculatePerimeterFigure() {
         return sideA + sideB + sideC;
     }
 
     @Override
-    double calculateAreaFigure() {
-        double sqrArea = perimeterFigure * (perimeterFigure - sideA) *
-                (perimeterFigure - sideB) * (perimeterFigure - sideC);
+    public double calculateAreaFigure() {
+        double halfPerimeterFigure = calculatePerimeterFigure() / 2;
+        double sqrArea = halfPerimeterFigure * (halfPerimeterFigure - sideA) *
+                (halfPerimeterFigure - sideB) * (halfPerimeterFigure - sideC);
         return Math.sqrt(sqrArea);
     }
 
@@ -43,14 +55,18 @@ public class Triangle extends Figure {
         return Math.asin(side * multiplierFormula);
     }
 
+    public double getSideB() {
+        return sideB;
+    }
+
     @Override
-    public String toString() {
+    public String getInfoFigure() {
         double multiplyForGrad = 180 / PI;
         double alpha = getAngleSideA();
         double beta = getAngleSideBOrSideC(alpha, sideB) * multiplyForGrad;
         double gama = getAngleSideBOrSideC(alpha, sideC) * multiplyForGrad;
 
-        return super.toString() +
+        return super.getInfoFigure() +
                 String.format("Длина стороны A: %.2f мм \nПротиволежащий угол: %.2f° " +
                         "\nДлина стороны A: %.2f мм \nПротиволежащий угол: %.2f° " +
                         "\nДлина стороны A: %.2f мм \nПротиволежащий угол: %.2f° ", sideA, alpha * multiplyForGrad, sideB, beta, sideC, gama);

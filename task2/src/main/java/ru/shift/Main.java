@@ -1,22 +1,27 @@
 package ru.shift;
 
-import java.util.List;
+import org.apache.commons.cli.ParseException;
+import ru.shift.io.parsingParameter.OptionsParser;
+import ru.shift.io.parsingParameter.UtilOptions;
 
-import static ru.shift.ReaderParameterUtils.*;
-import static ru.shift.OutputResultUtils.*;
+import static ru.shift.figure.FigureFactory.createFigure;
+import static ru.shift.io.OutputResultUtils.writeData;
+import static ru.shift.io.ReaderParameterUtils.readFile;
 
 public class Main {
     public static void main(String[] args) {
-        HandlerParameter handlerParameter = loopingGettingParameters();
+        OptionsParser optionsParser = OptionsParser.getOptionsParser();
 
-        FigureName figureName = handlerParameter.getNameFigure();
-        List<Double> listParameter = handlerParameter.getParameterFigure();
-        Figure figure = switch (figureName) {
-            case CIRCLE -> new Circle(figureName, listParameter);
-            case TRIANGLE -> new Triangle(figureName, listParameter);
-            case RECTANGLE -> new Rectangle(figureName, listParameter);
-        };
+        try {
+            UtilOptions utilOptions = optionsParser.parseOption(args);
 
-        writeData(figure);
+            HandlerParameter handlerParameter = new HandlerParameter(readFile(utilOptions.getInputFiles()));
+            if (handlerParameter.checkComplianceNumberParameters()) {
+                writeData(utilOptions, createFigure(handlerParameter));
+            }
+        } catch (IllegalArgumentException | ParseException e) {
+            System.err.println(e.getMessage());
+            optionsParser.printUsage();
+        }
     }
 }

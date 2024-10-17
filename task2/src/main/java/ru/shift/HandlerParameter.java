@@ -1,34 +1,41 @@
 package ru.shift;
 
+import ru.shift.figure.FigureName;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static ru.shift.FigureName.*;
+import static ru.shift.figure.FigureName.*;
 
 public class HandlerParameter {
     private final List<String> dataFile;
     private final Map<FigureName, Integer> countParameter = new HashMap<>();
 
-    HandlerParameter(List<String> dataFile) {
+    public HandlerParameter(List<String> dataFile) {
         this.dataFile = dataFile;
         countParameter.put(CIRCLE, 1);
         countParameter.put(RECTANGLE, 2);
         countParameter.put(TRIANGLE, 3);
     }
 
-    FigureName getNameFigure() {
-        FigureName nameFigure = switch (dataFile.get(0).toUpperCase()) {
-            case "CIRCLE" -> CIRCLE;
-            case "TRIANGLE" -> TRIANGLE;
-            case "RECTANGLE" -> RECTANGLE;
-            default -> throw new IllegalStateException("Unexpected value: " + dataFile.get(0).toUpperCase());
-        };
-        return nameFigure;
+
+    public FigureName getNameFigure() {
+        String nameFromFile = dataFile.get(0);
+        if (nameFromFile.equals(nameFromFile.toUpperCase())) {
+            return switch (nameFromFile) {
+                case "CIRCLE" -> CIRCLE;
+                case "TRIANGLE" -> TRIANGLE;
+                case "RECTANGLE" -> RECTANGLE;
+                default -> throw new IllegalStateException("Неожидаемое значение: " + nameFromFile);
+            };
+        } else {
+            throw new IllegalArgumentException("Некорректная запись типа фигуры");
+        }
     }
 
-    List<Double> getParameterFigure() {
+    public List<Double> getParameterFigure() {
         List<Double> listParameter = new LinkedList<>();
 
         String handleString = dataFile.get(1);
@@ -39,25 +46,17 @@ public class HandlerParameter {
                 Double number = Double.parseDouble(parameter);
                 listParameter.add(number);
             } catch (NumberFormatException e) {
-                System.out.println(parameter + " не является числом.");
+                throw new NumberFormatException(parameter + " не является числом.");
             }
         }
         return listParameter;
     }
 
-    boolean checkingSideTriangle() {
-        List<Double> paramList = getParameterFigure();
-        boolean comparation = true;
-        if (getNameFigure().equals(TRIANGLE)) {
-            comparation = (paramList.get(0) + paramList.get(1) > paramList.get(2)) &&
-                    (paramList.get(0) + paramList.get(2) > paramList.get(1)) &&
-                    (paramList.get(1) + paramList.get(2) > paramList.get(0));
+    public boolean checkComplianceNumberParameters() {
+        if (countParameter.get(getNameFigure()) == getParameterFigure().size()) {
+            return true;
+        } else {
+            throw new IllegalArgumentException("Некорретное количество параметров для создания " + getNameFigure());
         }
-
-        return comparation;
-    }
-
-    boolean checkingComplianceNumberParameters() {
-        return countParameter.get(getNameFigure()) == getParameterFigure().size();
     }
 }

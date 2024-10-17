@@ -1,2 +1,2 @@
-Circle
-5
+RECTANGLE
+1 2 
