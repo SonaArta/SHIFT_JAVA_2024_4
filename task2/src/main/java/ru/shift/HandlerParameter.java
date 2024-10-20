@@ -59,4 +59,5 @@ public class HandlerParameter {
             throw new IllegalArgumentException("Некорретное количество параметров для создания " + getNameFigure());
         }
     }
+
 }

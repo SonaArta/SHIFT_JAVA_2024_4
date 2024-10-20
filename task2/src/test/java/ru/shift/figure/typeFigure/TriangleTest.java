@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import ru.shift.figure.Figure;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -16,9 +17,9 @@ import static ru.shift.figure.FigureName.TRIANGLE;
 import static ru.shift.figure.typeFigure.Triangle.checkingSideTriangle;
 
 class TriangleTest {
-    @ParameterizedTest(name = "При сторонах {0} проверка на соответствие возвращает {1}")
+    @ParameterizedTest(name = "РџСЂРё СЃС‚РѕСЂРѕРЅР°С… {0} РїСЂРѕРІРµСЂРєР° РЅР° СЃРѕРѕС‚РІРµС‚СЃС‚РІРёРµ РІРѕР·РІСЂР°С‰Р°РµС‚ {1}")
     @MethodSource("whenParametersCheckInequalityProvider")
-    @DisplayName("Проверка на соответствие сторон треугольника")
+    @DisplayName("РџСЂРѕРІРµСЂРєР° РЅР° СЃРѕРѕС‚РІРµС‚СЃС‚РІРёРµ СЃС‚РѕСЂРѕРЅ С‚СЂРµСѓРіРѕР»СЊРЅРёРєР°")
     void whenParametersCheckInequality(List<Double> paramList, boolean expected) {
         Assertions.assertEquals(expected, checkingSideTriangle(paramList));
     }
@@ -33,15 +34,15 @@ class TriangleTest {
     }
 
     @Test
-    @DisplayName("Проверка возвращения исключения при невыполнении условия существования треугольника")
+    @DisplayName("РџСЂРѕРІРµСЂРєР° РІРѕР·РІСЂР°С‰РµРЅРёСЏ РёСЃРєР»СЋС‡РµРЅРёСЏ РїСЂРё РЅРµРІС‹РїРѕР»РЅРµРЅРёРё СѓСЃР»РѕРІРёСЏ СЃСѓС‰РµСЃС‚РІРѕРІР°РЅРёСЏ С‚СЂРµСѓРіРѕР»СЊРЅРёРєР°")
     void whenParameterNotMatchesException() {
         assertThatThrownBy(() -> new Triangle(TRIANGLE, List.of(1.0, 2.0, 3.0)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @ParameterizedTest(name = "Периметр треугольника {0} равен {1}")
+    @ParameterizedTest(name = "РџРµСЂРёРјРµС‚СЂ С‚СЂРµСѓРіРѕР»СЊРЅРёРєР° {0} СЂР°РІРµРЅ {1}")
     @MethodSource("whenTriangleThenPerimeterProvider")
-    @DisplayName("Расчет периметра треугольника")
+    @DisplayName("Р Р°СЃС‡РµС‚ РїРµСЂРёРјРµС‚СЂР° С‚СЂРµСѓРіРѕР»СЊРЅРёРєР°")
     void whenTriangleThenPerimeter(Triangle triangle, double expected) {
         Assertions.assertEquals(expected, triangle.calculatePerimeterFigure());
     }
@@ -54,9 +55,9 @@ class TriangleTest {
         );
     }
 
-    @ParameterizedTest(name = "Площадь треугольника {0} равна {1}")
+    @ParameterizedTest(name = "РџР»РѕС‰Р°РґСЊ С‚СЂРµСѓРіРѕР»СЊРЅРёРєР° {0} СЂР°РІРЅР° {1}")
     @MethodSource("whenTriangleThenAreaProvider")
-    @DisplayName("Расчет площади треугольника")
+    @DisplayName("Р Р°СЃС‡РµС‚ РїР»РѕС‰Р°РґРё С‚СЂРµСѓРіРѕР»СЊРЅРёРєР°")
     void whenTriangleThenArea(Triangle triangle, double expected) {
         Assertions.assertEquals(expected, triangle.calculateAreaFigure());
     }
@@ -69,9 +70,9 @@ class TriangleTest {
         );
     }
 
-    @ParameterizedTest(name = "Противолежащий стороне А угол треугольника {0} равен {1}")
+    @ParameterizedTest(name = "РџСЂРѕС‚РёРІРѕР»РµР¶Р°С‰РёР№ СЃС‚РѕСЂРѕРЅРµ Рђ СѓРіРѕР» С‚СЂРµСѓРіРѕР»СЊРЅРёРєР° {0} СЂР°РІРµРЅ {1}")
     @MethodSource("whenTriangleThenAngleSideAProvider")
-    @DisplayName("Расчет противолежащего стороне А угла")
+    @DisplayName("Р Р°СЃС‡РµС‚ РїСЂРѕС‚РёРІРѕР»РµР¶Р°С‰РµРіРѕ СЃС‚РѕСЂРѕРЅРµ Рђ СѓРіР»Р°")
     void whenTriangleThenAngleSideA(Triangle triangle, String expected) {
         Assertions.assertEquals(expected, String.format("%.2f", triangle.getAngleSideA() * 180 / PI));
     }
@@ -84,9 +85,9 @@ class TriangleTest {
         );
     }
 
-    @ParameterizedTest(name = "Противолежащий стороне B угол треугольника {0} равен {1}")
+    @ParameterizedTest(name = "РџСЂРѕС‚РёРІРѕР»РµР¶Р°С‰РёР№ СЃС‚РѕСЂРѕРЅРµ B СѓРіРѕР» С‚СЂРµСѓРіРѕР»СЊРЅРёРєР° {0} СЂР°РІРµРЅ {1}")
     @MethodSource("whenTriangleThenAngleSideBProvider")
-    @DisplayName("Расчет противолежащего стороне B угла")
+    @DisplayName("Р Р°СЃС‡РµС‚ РїСЂРѕС‚РёРІРѕР»РµР¶Р°С‰РµРіРѕ СЃС‚РѕСЂРѕРЅРµ B СѓРіР»Р°")
     void whenTriangleThenAngleSideB(Triangle triangle, String expected) {
         Assertions.assertEquals(expected, String.format("%.2f", triangle.getAngleSideBOrSideC(triangle.getAngleSideA(), triangle.getSideB()) * 180 / PI));
     }
@@ -97,5 +98,16 @@ class TriangleTest {
                 Arguments.arguments(new Triangle(TRIANGLE, List.of(1.0, 2.0, 2.0)), "75,52"),
                 Arguments.arguments(new Triangle(TRIANGLE, List.of(2.0, 4.0, 5.0)), "49,46")
         );
+    }
+
+    @Test
+    void getInfoFigure() {
+        Figure triangle = new Triangle(TRIANGLE, List.of(1.0, 2.0, 2.0));
+        String exactInfo = String.format("РўРёРї С„РёРіСѓСЂС‹: %s \nРџР»РѕС‰Р°РґСЊ: %.2f РєРІ. РјРј \nРџРµСЂРёРјРµС‚СЂ: %.2f РјРј\nР”Р»РёРЅР° СЃС‚РѕСЂРѕРЅС‹ A: %.2f РјРј \nРџСЂРѕС‚РёРІРѕР»РµР¶Р°С‰РёР№ СѓРіРѕР»: %.2fВ° " +
+                        "\nР”Р»РёРЅР° СЃС‚РѕСЂРѕРЅС‹ A: %.2f РјРј \nРџСЂРѕС‚РёРІРѕР»РµР¶Р°С‰РёР№ СѓРіРѕР»: %.2fВ° " +
+                        "\nР”Р»РёРЅР° СЃС‚РѕСЂРѕРЅС‹ A: %.2f РјРј \nРџСЂРѕС‚РёРІРѕР»РµР¶Р°С‰РёР№ СѓРіРѕР»: %.2fВ° ",
+                "РўСЂРµСѓРіРѕР»СЊРЅРёРє", 0.97, 5.0, 1.0, 28.96, 2.0, 75.52, 2.0, 75.52);
+
+        Assertions.assertEquals(exactInfo, triangle.getInfoFigure());
     }
 }

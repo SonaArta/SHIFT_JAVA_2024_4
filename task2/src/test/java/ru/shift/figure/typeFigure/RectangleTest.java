@@ -2,9 +2,11 @@ package ru.shift.figure.typeFigure;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import ru.shift.figure.Figure;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -12,9 +14,9 @@ import java.util.stream.Stream;
 import static ru.shift.figure.FigureName.RECTANGLE;
 
 class RectangleTest {
-    @ParameterizedTest(name = "Периметр прямольника {0} равен {1}")
+    @ParameterizedTest(name = "РџРµСЂРёРјРµС‚СЂ РїСЂСЏРјРѕР»СЊРЅРёРєР° {0} СЂР°РІРµРЅ {1}")
     @MethodSource("whenRectangleThenPerimeterProvider")
-    @DisplayName("Расчет периметра прямольника")
+    @DisplayName("Р Р°СЃС‡РµС‚ РїРµСЂРёРјРµС‚СЂР° РїСЂСЏРјРѕР»СЊРЅРёРєР°")
     void whenRectangleThenPerimeter(Rectangle rectangle, double expected) {
         Assertions.assertEquals(expected, rectangle.calculatePerimeterFigure());
     }
@@ -26,9 +28,9 @@ class RectangleTest {
         );
     }
 
-    @ParameterizedTest(name = "Площадь прямольника {0} равен {1}")
+    @ParameterizedTest(name = "РџР»РѕС‰Р°РґСЊ РїСЂСЏРјРѕР»СЊРЅРёРєР° {0} СЂР°РІРµРЅ {1}")
     @MethodSource("whenRectangleThenAreaProvider")
-    @DisplayName("Расчет площади прямольника")
+    @DisplayName("Р Р°СЃС‡РµС‚ РїР»РѕС‰Р°РґРё РїСЂСЏРјРѕР»СЊРЅРёРєР°")
     void whenRectangleThenArea(Rectangle rectangle, double expected) {
         Assertions.assertEquals(expected, rectangle.calculateAreaFigure());
     }
@@ -40,9 +42,9 @@ class RectangleTest {
         );
     }
 
-    @ParameterizedTest(name = "Диагональ прямольника {0} равна {1}")
+    @ParameterizedTest(name = "Р”РёР°РіРѕРЅР°Р»СЊ РїСЂСЏРјРѕР»СЊРЅРёРєР° {0} СЂР°РІРЅР° {1}")
     @MethodSource("whenRectangleThenDiagonalProvider")
-    @DisplayName("Определение ширины прямольника")
+    @DisplayName("РћРїСЂРµРґРµР»РµРЅРёРµ С€РёСЂРёРЅС‹ РїСЂСЏРјРѕР»СЊРЅРёРєР°")
     void whenRectangleThenDiagonal(Rectangle rectangle, String expected) {
         Assertions.assertEquals(expected, String.format("%.2f", rectangle.getDiagonal()));
     }
@@ -54,9 +56,9 @@ class RectangleTest {
         );
     }
 
-    @ParameterizedTest(name = "Ширина прямольника {0} равна {1}")
+    @ParameterizedTest(name = "РЁРёСЂРёРЅР° РїСЂСЏРјРѕР»СЊРЅРёРєР° {0} СЂР°РІРЅР° {1}")
     @MethodSource("whenRectangleThenWidthProvider")
-    @DisplayName("Определение ширины прямольника")
+    @DisplayName("РћРїСЂРµРґРµР»РµРЅРёРµ С€РёСЂРёРЅС‹ РїСЂСЏРјРѕР»СЊРЅРёРєР°")
     void whenRectangleThenWidth(Rectangle rectangle, double expected) {
         Assertions.assertEquals(expected, rectangle.getWidth());
     }
@@ -68,9 +70,9 @@ class RectangleTest {
         );
     }
 
-    @ParameterizedTest(name = "Длина прямольника {0} равна {1}")
+    @ParameterizedTest(name = "Р”Р»РёРЅР° РїСЂСЏРјРѕР»СЊРЅРёРєР° {0} СЂР°РІРЅР° {1}")
     @MethodSource("whenRectangleThenLengthProvider")
-    @DisplayName("Определение длины прямольника")
+    @DisplayName("РћРїСЂРµРґРµР»РµРЅРёРµ РґР»РёРЅС‹ РїСЂСЏРјРѕР»СЊРЅРёРєР°")
     void whenRectangleThenLength(Rectangle rectangle, double expected) {
         Assertions.assertEquals(expected, rectangle.getLength());
     }
@@ -82,4 +84,12 @@ class RectangleTest {
         );
     }
 
+    @Test
+    void getInfoFigure() {
+        Figure rectangle = new Rectangle(RECTANGLE, List.of(1.0, 2.0));
+        String exactInfo = String.format("РўРёРї С„РёРіСѓСЂС‹: %s \nРџР»РѕС‰Р°РґСЊ: %.2f РєРІ. РјРј \nРџРµСЂРёРјРµС‚СЂ: %.2f РјРј\nР”Р»РёРЅР° РґРёР°РіРѕРЅР°Р»Рё: %.2f РјРј \nР”Р»РёРЅР°: %.2f РјРј \nРЁРёСЂРёРЅР°: %.2f РјРј",
+                "РџСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРє", 2.0, 6.0, 2.24, 2.0, 1.0);
+
+        Assertions.assertEquals(exactInfo, rectangle.getInfoFigure());
+    }
 }
