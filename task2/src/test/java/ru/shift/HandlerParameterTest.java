@@ -15,9 +15,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static ru.shift.figure.FigureName.*;
 
 class HandlerParameterTest {
-    @ParameterizedTest(name = "Тип фигуры {0} соответствует {1}")
+    @ParameterizedTest(name = "РўРёРї С„РёРіСѓСЂС‹ {0} СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓРµС‚ {1}")
     @MethodSource("whenDataFileThenFigureProvider")
-    @DisplayName("Определение типа фигуры")
+    @DisplayName("РћРїСЂРµРґРµР»РµРЅРёРµ С‚РёРїР° С„РёРіСѓСЂС‹")
     void whenDataFileThenFigure(HandlerParameter handlerParameter, FigureName expected) {
         Assertions.assertEquals(expected, handlerParameter.getNameFigure());
     }
@@ -31,7 +31,7 @@ class HandlerParameterTest {
     }
 
     @Test
-    @DisplayName("Проверка возвращения исключения при некорректной записи типа фигуры")
+    @DisplayName("РџСЂРѕРІРµСЂРєР° РІРѕР·РІСЂР°С‰РµРЅРёСЏ РёСЃРєР»СЋС‡РµРЅРёСЏ РїСЂРё РЅРµРєРѕСЂСЂРµРєС‚РЅРѕР№ Р·Р°РїРёСЃРё С‚РёРїР° С„РёРіСѓСЂС‹")
     void whenTypeFigureIsLowerCaseThenException() {
         HandlerParameter handlerParameter = new HandlerParameter(List.of("circle", "1.0"));
 
@@ -40,7 +40,7 @@ class HandlerParameterTest {
     }
 
     @Test
-    @DisplayName("Проверка возвращения исключения при получении неожиданного типа фигуры")
+    @DisplayName("РџСЂРѕРІРµСЂРєР° РІРѕР·РІСЂР°С‰РµРЅРёСЏ РёСЃРєР»СЋС‡РµРЅРёСЏ РїСЂРё РїРѕР»СѓС‡РµРЅРёРё РЅРµРѕР¶РёРґР°РЅРЅРѕРіРѕ С‚РёРїР° С„РёРіСѓСЂС‹")
     void whenTypeFigureIsUnexpectedThenException() {
         HandlerParameter handlerParameter = new HandlerParameter(List.of("LUNTIK", "1.0"));
 
@@ -48,9 +48,9 @@ class HandlerParameterTest {
                 .isInstanceOf(IllegalStateException.class);
     }
 
-    @ParameterizedTest(name = "Тип фигуры {0} соответствует {1}")
+    @ParameterizedTest(name = "РўРёРї С„РёРіСѓСЂС‹ {0} СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓРµС‚ {1}")
     @MethodSource("whenDataFileThenParameterFigureProvider")
-    @DisplayName("Получение параметров фигуры")
+    @DisplayName("РџРѕР»СѓС‡РµРЅРёРµ РїР°СЂР°РјРµС‚СЂРѕРІ С„РёРіСѓСЂС‹")
     void whenDataFileThenParameterFigure(HandlerParameter handlerParameter, List<Double> expected) {
         Assertions.assertEquals(expected, handlerParameter.getParameterFigure());
     }
@@ -64,7 +64,7 @@ class HandlerParameterTest {
     }
 
     @Test
-    @DisplayName("Проверка возвращения исключения, если параметры фигуры не являются числом")
+    @DisplayName("РџСЂРѕРІРµСЂРєР° РІРѕР·РІСЂР°С‰РµРЅРёСЏ РёСЃРєР»СЋС‡РµРЅРёСЏ, РµСЃР»Рё РїР°СЂР°РјРµС‚СЂС‹ С„РёРіСѓСЂС‹ РЅРµ СЏРІР»СЏСЋС‚СЃСЏ С‡РёСЃР»РѕРј")
     void whenDataFileNotNumberParameterThenException() {
         HandlerParameter handlerParameter = new HandlerParameter(List.of("RECTANGLE", "1.0ssd2.0"));
 
@@ -72,9 +72,9 @@ class HandlerParameterTest {
                 .isInstanceOf(NumberFormatException.class);
     }
 
-    @ParameterizedTest(name = "Тип фигуры {0}")
+    @ParameterizedTest(name = "РўРёРї С„РёРіСѓСЂС‹ {0}")
     @MethodSource("whenNumberParameterComplianceThenTrueProvider")
-    @DisplayName("Проверка соответствия числа параметров необходимому количеству параметров фигуры")
+    @DisplayName("РџСЂРѕРІРµСЂРєР° СЃРѕРѕС‚РІРµС‚СЃС‚РІРёСЏ С‡РёСЃР»Р° РїР°СЂР°РјРµС‚СЂРѕРІ РЅРµРѕР±С…РѕРґРёРјРѕРјСѓ РєРѕР»РёС‡РµСЃС‚РІСѓ РїР°СЂР°РјРµС‚СЂРѕРІ С„РёРіСѓСЂС‹")
     void whenNumberParameterComplianceThenTrue(HandlerParameter handlerParameter) {
         Assertions.assertTrue(handlerParameter.checkComplianceNumberParameters());
     }
@@ -88,7 +88,7 @@ class HandlerParameterTest {
     }
 
     @Test
-    @DisplayName("Проверка возникновения исключения при сопоставлении числа параметров с необходимым количеством параметров для фигуры")
+    @DisplayName("РџСЂРѕРІРµСЂРєР° РІРѕР·РЅРёРєРЅРѕРІРµРЅРёСЏ РёСЃРєР»СЋС‡РµРЅРёСЏ РїСЂРё СЃРѕРїРѕСЃС‚Р°РІР»РµРЅРёРё С‡РёСЃР»Р° РїР°СЂР°РјРµС‚СЂРѕРІ СЃ РЅРµРѕР±С…РѕРґРёРјС‹Рј РєРѕР»РёС‡РµСЃС‚РІРѕРј РїР°СЂР°РјРµС‚СЂРѕРІ РґР»СЏ С„РёРіСѓСЂС‹")
     void whenNumberParameterNotComplianceThenTrueThenException() {
         HandlerParameter handlerParameter = new HandlerParameter(List.of("CIRCLE", "1.0 2.0 3.0"));
 
