@@ -2,7 +2,7 @@ package ru.shift;
 
 import java.io.PrintWriter;
 
-import static ru.shift.ReaderParameterUtils.readTableSize;
+import static ru.shift.io.ReaderParameterUtils.readTableSize;
 
 public class Main {
     public static void main(String[] args) {
