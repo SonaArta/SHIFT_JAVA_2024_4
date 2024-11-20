@@ -5,43 +5,53 @@ import org.slf4j.LoggerFactory;
 import ru.shift.calculation.function.Function;
 import ru.shift.utils.Range;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import static ru.shift.utils.Utils.prepareRange;
+import java.util.concurrent.Future;
 
 public class Calculator {
     private static final Logger logger = LoggerFactory.getLogger(Calculator.class);
 
-    public Calculator() {
+    private static List<Range> prepareRange(int countThreads, long baseSeries, long number) {
+        List<Range> rangeList = new ArrayList<>(countThreads);
+
+        long step = number / countThreads;
+        long startCalculation = baseSeries;
+        for (int i = 0; i < countThreads; i++) {
+            long endCalculation = (i == countThreads - 1) ? number : startCalculation + step - 1;
+            Range range = new Range(startCalculation, endCalculation);
+            rangeList.add(range);
+
+            startCalculation += step;
+        }
+        return rangeList;
     }
 
-    public double calculate(long number, Function function, int numberThreads) {
-        CountDownLatch countDownLatch = new CountDownLatch(numberThreads);
-        ExecutorService executorService = Executors.newFixedThreadPool(numberThreads);
-        List<Task> tasks = new LinkedList<>();
-        List<Range> rangeList = prepareRange(numberThreads, function.getBaseFunction(), number);
+    public double calculate(long number, int countThreads, Function function) {
+        ExecutorService executorService = Executors.newFixedThreadPool(countThreads);
+        List<Range> rangeList = prepareRange(countThreads, function.getBaseFunction(), number);
+        List<Future<Double>> futuresTask = new LinkedList<>();
+        double resultSumThread = 0;
 
         try {
             for (Range range : rangeList) {
-                Task task = new Task(range, countDownLatch, function);
-                tasks.add(task);
-                executorService.submit(task);
+                Future<Double> future = executorService.submit(new Task(range, function));
+                futuresTask.add(future);
             }
-            countDownLatch.await();
-        } catch (InterruptedException e) {
+
+            for (Future<Double> future : futuresTask) {
+                resultSumThread += future.get();
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            Thread.currentThread().interrupt();
             logger.error("Error waiting for thread to complete", e);
         } finally {
             executorService.shutdown();
         }
-
-        double resultThreadSum = 0.0;
-        for (Task currentTask : tasks) {
-            resultThreadSum += currentTask.getResultCalculation();
-        }
-        return resultThreadSum;
+        return resultSumThread;
     }
 }

@@ -5,38 +5,34 @@ import org.slf4j.LoggerFactory;
 import ru.shift.calculation.function.Function;
 import ru.shift.utils.Range;
 
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Callable;
 
-public class Task implements Runnable {
+public class Task implements Callable<Double> {
     private static final Logger logger = LoggerFactory.getLogger(Calculator.class);
 
     private final Range range;
-    private final CountDownLatch countDownLatch;
     private final Function function;
     private double resultCalculation;
 
-    public Task(Range range, CountDownLatch countDownLatch, Function function) {
+    public Task(Range range, Function function) {
         this.range = range;
         this.resultCalculation = 0;
-        this.countDownLatch = countDownLatch;
         this.function = function;
     }
 
-    public double getResultCalculation() {
-        return resultCalculation;
-    }
-
     @Override
-    public void run() {
+    public Double call() {
         long startTime = System.currentTimeMillis();
 
         for (long n = range.getStartCalculation(); n <= range.getEndCalculation(); n++) {
             resultCalculation += function.calculateFunction(n);
         }
-        countDownLatch.countDown();
-        long resultTime = System.currentTimeMillis() - startTime;
+
         logger.info("Calculation result in range from {} to {}: {}. Calculation time - {} millisecond",
-                range.getStartCalculation(), range.getEndCalculation(), resultCalculation, resultTime);
+                range.getStartCalculation(), range.getEndCalculation(),
+                resultCalculation, System.currentTimeMillis() - startTime);
+
+        return resultCalculation;
     }
 
 }
