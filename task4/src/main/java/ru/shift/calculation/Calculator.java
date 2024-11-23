@@ -16,13 +16,13 @@ import java.util.concurrent.Future;
 public class Calculator {
     private static final Logger logger = LoggerFactory.getLogger(Calculator.class);
 
-    private static List<Range> prepareRange(int countThreads, long baseSeries, long number) {
+    private static List<Range> prepareRange(int countThreads, long baseSeries, long upperLimitMathSeries) {
         List<Range> rangeList = new ArrayList<>(countThreads);
 
-        long step = number / countThreads;
+        long step = upperLimitMathSeries / countThreads;
         long startCalculation = baseSeries;
         for (int i = 0; i < countThreads; i++) {
-            long endCalculation = (i == countThreads - 1) ? number : startCalculation + step - 1;
+            long endCalculation = (i == countThreads - 1) ? upperLimitMathSeries : startCalculation + step - 1;
             Range range = new Range(startCalculation, endCalculation);
             rangeList.add(range);
 
@@ -31,9 +31,9 @@ public class Calculator {
         return rangeList;
     }
 
-    public double calculate(long number, int countThreads, Function function) {
+    public double calculate(long upperLimitMathSeries, int countThreads, Function function) {
         ExecutorService executorService = Executors.newFixedThreadPool(countThreads);
-        List<Range> rangeList = prepareRange(countThreads, function.getBaseFunction(), number);
+        List<Range> rangeList = prepareRange(countThreads, function.getBaseFunction(), upperLimitMathSeries);
         List<Future<Double>> futuresTask = new LinkedList<>();
         double resultSumThread = 0;
 
