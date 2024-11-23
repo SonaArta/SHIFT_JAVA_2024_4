@@ -1,13 +1,13 @@
 package ru.shift.view;
 
+import ru.shift.controller.interfaces.CellEventListener;
+import ru.shift.controller.RecordController;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
 import static ru.shift.view.GameType.NOVICE;
-
-import ru.shift.controller.CellEventListener;
-import ru.shift.controller.RecordController;
 
 public class MainWindow extends JFrame {
     private final Container contentPane;
@@ -102,7 +102,7 @@ public class MainWindow extends JFrame {
 
         addButtonsPanel(createButtonsPanel(rowsCount, colsCount));
         addTimerImage();
-        addTimerLabel(timerLabel = new JLabel("0"));
+        addTimerLabel(timerLabel = new JLabel("00"));
         addBombCounter(bombsCounterLabel = new JLabel(Integer.toString(NOVICE.getNumberBomb())));
         addBombCounterImage();
         pack();
@@ -206,4 +206,5 @@ public class MainWindow extends JFrame {
         mainLayout.setConstraints(label, gbc);
         contentPane.add(label);
     }
+
 }

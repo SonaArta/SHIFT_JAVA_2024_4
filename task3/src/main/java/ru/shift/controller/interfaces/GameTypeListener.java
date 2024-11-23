@@ -1,4 +1,4 @@
-package ru.shift.controller;
+package ru.shift.controller.interfaces;
 
 import ru.shift.view.GameType;
 

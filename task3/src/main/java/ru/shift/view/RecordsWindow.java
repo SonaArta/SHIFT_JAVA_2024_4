@@ -1,6 +1,6 @@
 package ru.shift.view;
 
-import ru.shift.controller.RecordNameListener;
+import ru.shift.controller.interfaces.RecordNameListener;
 
 import javax.swing.*;
 import java.awt.*;

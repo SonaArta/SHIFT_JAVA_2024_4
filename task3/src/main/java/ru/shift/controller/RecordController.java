@@ -1,32 +1,50 @@
 package ru.shift.controller;
 
+import ru.shift.controller.interfaces.RecordNameListener;
+import ru.shift.model.GameModel;
+import ru.shift.model.Record;
+import ru.shift.model.TimeCounter.TimeCounter;
+import ru.shift.view.GameType;
+import ru.shift.view.HighScoresWindow;
+
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
 import static ru.shift.utils.Constant.*;
-import static ru.shift.utils.FileUtils.*;
-
-import ru.shift.model.Record;
-import ru.shift.view.GameType;
-import ru.shift.view.HighScoresWindow;
+import static ru.shift.utils.FileUtils.readObjectListFromFile;
+import static ru.shift.utils.FileUtils.writeObjectListToFile;
 
 public class RecordController implements RecordNameListener {
     private final HighScoresWindow highScoresWindow;
+    private final GameModel gameModel;
+    private final TimeCounter timeCounter;
     private List<Record> winnersNoviceMode;
     private List<Record> winnersMediumMode;
     private List<Record> winnersExpertMode;
-    private GameType currentGameType;
+    private boolean changeWinnerNoviceList;
+    private boolean changeWinnerMediumList;
+    private boolean changeWinnerExpertList;
     private int currentTimeRecord;
 
-    public RecordController(HighScoresWindow highScoresWindow) {
+    public RecordController(HighScoresWindow highScoresWindow, GameModel gameModel, TimeCounter timeCounter) {
         this.highScoresWindow = highScoresWindow;
+        this.gameModel = gameModel;
+        this.timeCounter = timeCounter;
+        changeWinnerNoviceList = false;
+        changeWinnerMediumList = false;
+        changeWinnerExpertList = false;
+
         initializeListWinners();
         setAllRecord();
     }
 
     @Override
     public void onRecordNameEntered(String name) {
+        GameType currentGameType = gameModel.getGameType();
+        this.currentTimeRecord = timeCounter.getCurrentGameTime();
+        changeStateList(currentGameType);
+
         name = name.isEmpty() ? DEFAULT_NAME : name;
         List<Record> currentList = getWinnerListGameType(currentGameType);
         Record newRecord = new Record(name, currentTimeRecord);
@@ -45,22 +63,14 @@ public class RecordController implements RecordNameListener {
         setAllRecord();
     }
 
-    public void setCurrentGameType(GameType currentGameType) {
-        this.currentGameType = currentGameType;
-    }
-
-    public void setCurrentTimeRecord(int currentTimeRecord) {
-        this.currentTimeRecord = currentTimeRecord;
-    }
-
     public void saveAllRecord() {
-        if (!winnersNoviceMode.isEmpty()) {
+        if (!winnersNoviceMode.isEmpty() && changeWinnerNoviceList) {
             writeObjectListToFile(winnersNoviceMode, NOVICE_FILE);
         }
-        if (!winnersMediumMode.isEmpty()) {
+        if (!winnersMediumMode.isEmpty() && changeWinnerMediumList) {
             writeObjectListToFile(winnersMediumMode, MEDIUM_FILE);
         }
-        if (!winnersExpertMode.isEmpty()) {
+        if (!winnersExpertMode.isEmpty() && changeWinnerExpertList) {
             writeObjectListToFile(winnersExpertMode, EXPERT_FILE);
         }
     }
@@ -74,6 +84,14 @@ public class RecordController implements RecordNameListener {
         }
         if (!winnersExpertMode.isEmpty()) {
             highScoresWindow.setExpertRecord(createTextForRecord(winnersExpertMode));
+        }
+    }
+
+    private void changeStateList(GameType currentGameType) {
+        switch (currentGameType) {
+            case NOVICE -> changeWinnerNoviceList = true;
+            case MEDIUM -> changeWinnerMediumList = true;
+            case EXPERT -> changeWinnerExpertList = true;
         }
     }
 

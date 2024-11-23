@@ -1,5 +1,7 @@
 package ru.shift.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.shift.model.Record;
 
 import java.io.*;
@@ -7,6 +9,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public final class FileUtils {
+    private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
+
     private FileUtils() {
 
     }
@@ -15,7 +19,7 @@ public final class FileUtils {
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(fileName, false))) {
             objectOutputStream.writeObject(list);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error writing file", e);
         }
     }
 
@@ -25,7 +29,7 @@ public final class FileUtils {
                 boolean isExit = file.createNewFile();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error creating file", e);
         }
     }
 
@@ -38,7 +42,7 @@ public final class FileUtils {
             try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(file))) {
                 newList = (List<Record>) objectInputStream.readObject();
             } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
+                logger.error("Error reading file", e);
             }
         }
         return newList;

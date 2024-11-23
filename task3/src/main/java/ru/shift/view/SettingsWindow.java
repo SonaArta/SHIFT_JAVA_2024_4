@@ -1,6 +1,6 @@
 package ru.shift.view;
 
-import ru.shift.controller.GameTypeListener;
+import ru.shift.controller.interfaces.GameTypeListener;
 
 import javax.swing.*;
 import java.awt.*;
