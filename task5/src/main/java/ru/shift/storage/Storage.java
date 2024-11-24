@@ -3,12 +3,9 @@ package ru.shift.storage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.shift.resource.Resource;
-import ru.shift.utils.PropertiesProgram;
 
 import java.util.LinkedList;
 import java.util.Queue;
-
-import static ru.shift.utils.PropertiesProgram.threadCount;
 
 public class Storage {
     private static final Logger logger = LoggerFactory.getLogger(Storage.class);
@@ -16,47 +13,50 @@ public class Storage {
     private final int storageSize;
     private final Queue<Resource> resourceQueue;
 
-    public Storage() {
-        this.storageSize = PropertiesProgram.storageSize;
+    public Storage(int storageSize) {
+        this.storageSize = storageSize;
         this.resourceQueue = new LinkedList<>();
     }
 
-    synchronized public long put(Resource resource) {
+    public int getCountResourceInStorage() {
+        return resourceQueue.size();
+    }
+
+    public synchronized void put(Resource resource, int idProducer) {
         while (resourceQueue.size() >= storageSize) {
             try {
-                logger.info("\"{}\" with producerID  = {} has entered waiting mode.", Thread.currentThread().getName(), Thread.currentThread().getId() % threadCount);
+                logger.info("\"{}\" with ID = {} has entered waiting mode.",
+                        Thread.currentThread().getName(), idProducer);
                 wait();
-                logger.info("\"{}\" with producerID = {} exited waiting  mode.", Thread.currentThread().getName(), Thread.currentThread().getId() % threadCount);
+                logger.info("\"{}\" with ID = {} exited waiting mode.",
+                        Thread.currentThread().getName(), idProducer);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
+                logger.error("The flow in the sleep state was interrupted.", e);
             }
         }
-        long startTime = System.currentTimeMillis();
         resourceQueue.add(resource);
         logger.info("A resource with ID = {} was added. There are {} resources in stock.\n",
                 resource.getId(), resourceQueue.size());
         notifyAll();
-
-        return System.currentTimeMillis() - startTime;
     }
 
-    synchronized public long take() {
+    public synchronized Resource take(int idConsumer) {
         while (resourceQueue.isEmpty()) {
             try {
-                logger.info("\"{}\" with consumerID = {}  has entered waiting mode.", Thread.currentThread().getName(), Thread.currentThread().getId() % threadCount);
+                logger.info("\"{}\" with ID = {} has entered waiting mode.",
+                        Thread.currentThread().getName(), idConsumer);
                 wait();
-                logger.info("\"{}\" with consumerID = {} exited waiting  mode.", Thread.currentThread().getName(), Thread.currentThread().getId() % threadCount);
+                logger.info("\"{}\" with ID = {} exited waiting mode.",
+                        Thread.currentThread().getName(), idConsumer);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
+                logger.error("The flow in the sleep state was interrupted.", e);
             }
         }
-
-        long startTime = System.currentTimeMillis();
         Resource takenResource = resourceQueue.poll();
-        logger.info("A resource with ID = {} was taken away. There are {} resources in stock.\n",
-                takenResource.getId(), resourceQueue.size());
         notifyAll();
 
-        return System.currentTimeMillis() - startTime;
+        return takenResource;
     }
 }
