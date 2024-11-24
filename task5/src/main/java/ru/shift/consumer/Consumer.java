@@ -1,19 +1,19 @@
-package ru.shift.resourceHandler;
+package ru.shift.consumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.shift.resource.Resource;
 import ru.shift.storage.Storage;
-import ru.shift.utils.PropertiesProgram;
-
-import static ru.shift.utils.PropertiesProgram.threadCount;
 
 public class Consumer implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(Consumer.class);
+    private final int id;
     private final int consumerTime;
     private final Storage storage;
 
-    public Consumer(Storage storage) {
-        this.consumerTime = PropertiesProgram.consumerTime;
+    public Consumer(Storage storage, int consumerTime) {
+        this.id = IdGenerator.generateId();
+        this.consumerTime = consumerTime;
         this.storage = storage;
     }
 
@@ -21,12 +21,14 @@ public class Consumer implements Runnable {
     @Override
     public void run() {
         logger.info("\"{}\" with ID = {} is start\n",
-                Thread.currentThread().getName(), Thread.currentThread().getId() % threadCount);
+                Thread.currentThread().getName(), id);
 
         while (true) {
-            long differentTime = storage.take();
+            Resource takenResource = storage.take(id);
+            logger.info("A resource with ID = {} was taken away. There are {} resources in stock.\n",
+                    takenResource.getId(), storage.getCountResourceInStorage());
             try {
-                Thread.sleep(consumerTime - differentTime);
+                Thread.sleep(consumerTime);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 logger.error("The flow in the sleep state was interrupted.", e);
