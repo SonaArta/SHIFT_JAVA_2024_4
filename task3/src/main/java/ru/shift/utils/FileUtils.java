@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import ru.shift.model.Record;
 
 import java.io.*;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 public final class FileUtils {
@@ -34,7 +34,7 @@ public final class FileUtils {
     }
 
     public static List<Record> readObjectListFromFile(String fileName) {
-        List<Record> newList = new LinkedList<>();
+        List<Record> newList = new ArrayList<>();
         File file = new File(fileName);
 
         createFileIfNotExist(file);

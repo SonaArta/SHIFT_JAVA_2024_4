@@ -7,8 +7,8 @@ import ru.shift.model.TimeCounter.TimeCounter;
 import ru.shift.view.GameType;
 import ru.shift.view.HighScoresWindow;
 
+import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 
 import static ru.shift.utils.Constant.*;
@@ -104,9 +104,9 @@ public class RecordController implements RecordNameListener {
     }
 
     private void initializeListWinners() {
-        this.winnersNoviceMode = new LinkedList<>();
-        this.winnersMediumMode = new LinkedList<>();
-        this.winnersExpertMode = new LinkedList<>();
+        this.winnersNoviceMode = new ArrayList<>();
+        this.winnersMediumMode = new ArrayList<>();
+        this.winnersExpertMode = new ArrayList<>();
 
         winnersNoviceMode = readObjectListFromFile(NOVICE_FILE);
         winnersMediumMode = readObjectListFromFile(MEDIUM_FILE);

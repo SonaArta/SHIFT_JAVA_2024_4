@@ -1,7 +1,7 @@
 package ru.shift.view;
 
-import ru.shift.controller.interfaces.CellEventListener;
 import ru.shift.controller.RecordController;
+import ru.shift.controller.interfaces.CellEventListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,6 +36,9 @@ public class MainWindow extends JFrame {
         contentPane.setLayout(mainLayout);
         contentPane.setBackground(new Color(243, 165, 190));
 
+        createGameField(NOVICE.getNumberRows(), NOVICE.getNumberColumns());
+        setBombsCount(NOVICE.getNumberBomb());
+        setVisible(true);
     }
 
     private void createMenu() {

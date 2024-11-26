@@ -17,13 +17,13 @@ public class Application {
         MainWindow mainWindow = new MainWindow();
         SettingsWindow settingsWindow = new SettingsWindow(mainWindow);
         HighScoresWindow highScoresWindow = new HighScoresWindow(mainWindow);
-        ViewController viewController = new ViewController(mainWindow);
 
-        TimeCounter timeCounter = new TimeCounter(viewController);
-        GameModel gameModel = new GameModel(GameType.NOVICE, viewController);
+        GameModel gameModel = new GameModel(GameType.NOVICE);
+        TimeCounter timeCounter = new TimeCounter();
 
         RecordController recordController = new RecordController(highScoresWindow, gameModel, timeCounter);
-        Controller controller = new Controller(mainWindow, gameModel, recordController);
+        Controller controller = new Controller(gameModel);
+        ViewController viewController = new ViewController(mainWindow, settingsWindow, recordController, gameModel);
 
         mainWindow.setNewGameMenuAction(e -> settingsWindow.setVisible(true));
         mainWindow.setSettingsMenuAction(e -> settingsWindow.setVisible(true));
@@ -37,8 +37,11 @@ public class Application {
 
         settingsWindow.setGameTypeListener(controller);
 
+        gameModel.setCreateNewGameListener(viewController);
         gameModel.setCellListener(viewController);
         gameModel.setStartGameListener(timeCounter);
-        gameModel.setEndGameListener(List.of(timeCounter, controller));
+        gameModel.setEndGameListener(List.of(timeCounter, controller, viewController));
+
+        timeCounter.setListener(viewController);
     }
 }

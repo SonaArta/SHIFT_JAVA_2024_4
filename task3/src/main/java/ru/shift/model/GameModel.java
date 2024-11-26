@@ -1,15 +1,15 @@
 package ru.shift.model;
 
 import org.apache.commons.math3.random.MersenneTwister;
+import ru.shift.controller.Notifiable;
 import ru.shift.controller.interfaces.CellListener;
 import ru.shift.controller.interfaces.CreateNewGameListener;
 import ru.shift.controller.interfaces.EndGameListener;
 import ru.shift.controller.interfaces.StartGameListener;
+import ru.shift.model.consumer.CoordinatesConsumer;
 import ru.shift.view.GameImage;
 import ru.shift.view.GameType;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class GameModel {
@@ -20,13 +20,12 @@ public class GameModel {
     private boolean gameOver;
     private boolean isStart;
 
-    private CreateNewGameListener createNewGameListener;
-    private StartGameListener startGameListener;
-    private List<EndGameListener> endGameListeners = new LinkedList<>();
-    private CellListener cellListener;
+    private final Notifiable<CreateNewGameListener> createNewGameListener = new Notifiable<>();
+    private final Notifiable<StartGameListener> startGameListener = new Notifiable<>();
+    private final Notifiable<EndGameListener> endGameListeners = new Notifiable<>();
+    private final Notifiable<CellListener> cellListener = new Notifiable<>();
 
-    public GameModel(GameType gameType, CreateNewGameListener createNewGameListener) {
-        setCreateNewGameListener(createNewGameListener);
+    public GameModel(GameType gameType) {
         createNewGame(gameType);
     }
 
@@ -35,19 +34,19 @@ public class GameModel {
     }
 
     public void setCreateNewGameListener(CreateNewGameListener createNewGameListener) {
-        this.createNewGameListener = createNewGameListener;
+        this.createNewGameListener.add(createNewGameListener);
     }
 
     public void setStartGameListener(StartGameListener startGameListener) {
-        this.startGameListener = startGameListener;
+        this.startGameListener.add(startGameListener);
     }
 
     public void setEndGameListener(List<EndGameListener> endGameListeners) {
-        this.endGameListeners = endGameListeners;
+        this.endGameListeners.add(endGameListeners);
     }
 
     public void setCellListener(CellListener cellListener) {
-        this.cellListener = cellListener;
+        this.cellListener.add(cellListener);
     }
 
     public void printField() {
@@ -86,10 +85,7 @@ public class GameModel {
 
     public void openCellAround(int x, int y) {
         if (!gameOver && gameField[x][y].getCountBombAround() == calculateFlagAroundCell(x, y) && gameField[x][y].isOpen()) {
-            for (Coordinates coordinates : getCoordinatesAround(x, y)) {
-                int currX = coordinates.getX();
-                int currY = coordinates.getY();
-
+            applyAround(x, y, (currX, currY) -> {
                 if (!gameField[currX][currY].isOpen() && !gameField[currX][currY].isFlag()) {
                     gameField[currX][currY].setOpen();
                     notifyOpenCell(currX, currY);
@@ -98,7 +94,8 @@ public class GameModel {
                         openAllBomb();
                     }
                 }
-            }
+            });
+
             if (checkWin() || gameOver) {
                 notifyEndGame();
             }
@@ -133,7 +130,6 @@ public class GameModel {
                     numberClosedCell--;
                     notifyOpenCell(x, y);
                 }
-
             }
         }
         if (checkWin()) {
@@ -153,35 +149,29 @@ public class GameModel {
         return (!gameOver && numberClosedCell == 0) | correctFlag == gameType.getNumberBomb();
     }
 
-    public boolean checkGameIsOver() {
-        return this.gameOver;
-    }
-
     private void notifyNewGame(GameType gameType) {
-        createNewGameListener.onCreateNewGame(gameType);
+        createNewGameListener.notify(l -> l.onCreateNewGame(gameType));
     }
 
     private void notifyStartGame() {
-        startGameListener.onGameStart();
+        startGameListener.notify(StartGameListener::onGameStart);
     }
 
     private void notifyEndGame() {
-        for (EndGameListener endGameListener : endGameListeners) {
-            endGameListener.onGameEnd();
-        }
+        endGameListeners.notify(EndGameListener::onGameEnd);
     }
 
     private void notifyToggleFlag(int x, int y) {
         GameImage gameImage = gameField[x][y].isFlag() ? GameImage.MARKED : GameImage.CLOSED;
-        cellListener.onToggleFlag(x, y, gameImage, gameType.getNumberBomb() - numberFlag);
+        cellListener.notify(l -> l.onToggleFlag(x, y, gameImage, gameType.getNumberBomb() - numberFlag));
     }
 
     private void notifyOpenCell(int x, int y) {
         if (gameField[x][y].isBomb()) {
-            cellListener.onBombOpen(x, y);
+            cellListener.notify(l -> l.onBombOpen(x, y));
         } else {
             if (!gameField[x][y].isFlag()) {
-                cellListener.onCellOpen(x, y, gameField[x][y].getCountBombAround());
+                cellListener.notify(l -> l.onCellOpen(x, y, gameField[x][y].getCountBombAround()));
             }
         }
     }
@@ -221,45 +211,40 @@ public class GameModel {
         return x != currentX || y != currentY;
     }
 
-    private List<Coordinates> getCoordinatesAround(int x, int y) {
-        List<Coordinates> coordinatesList = new ArrayList<>();
+    private void applyAround(int x, int y, CoordinatesConsumer consumer) {
         for (int countX = x - 1; countX <= x + 1; countX++) {
             for (int countY = y - 1; countY <= y + 1; countY++) {
                 if (isNotEqualsCoordinates(x, countX, y, countY) && isInField(countX, countY)) {
-                    coordinatesList.add(new Coordinates(countX, countY));
+                    consumer.apply(countX, countY);
                 }
             }
         }
-        return coordinatesList;
     }
 
     private int calculateFlagAroundCell(int x, int y) {
-        int countFlag = 0;
-        for (Coordinates coordinates : getCoordinatesAround(x, y)) {
-            countFlag += gameField[coordinates.getX()][coordinates.getY()].isFlag() ? 1 : 0;
-        }
-        return countFlag;
+        final int[] countFlag = {0};
+        applyAround(x, y, (currX, currY) -> {
+            if (gameField[currX][currY].isFlag()) {
+                countFlag[0]++;
+            }
+        });
+        return countFlag[0];
     }
 
     private void increaseCountBombCellAroundBomb(int x, int y) {
-        for (Coordinates coordinates : getCoordinatesAround(x, y)) {
-            int currX = coordinates.getX();
-            int currY = coordinates.getY();
+        applyAround(x, y, (currX, currY) -> {
             if (!gameField[currX][currY].isBomb()) {
                 gameField[currX][currY].increaseCountBomb();
             }
-        }
+        });
     }
 
     private void openEmptyCellAround(int x, int y) {
-        for (Coordinates coordinates : getCoordinatesAround(x, y)) {
-            int currX = coordinates.getX();
-            int currY = coordinates.getY();
-
+        applyAround(x, y, (currX, currY) -> {
             if (!gameField[currX][currY].isBomb()) {
                 openCell(currX, currY);
             }
-        }
+        });
     }
 
     private void openAllBomb() {

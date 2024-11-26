@@ -8,13 +8,16 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class TimeCounter implements StartGameListener, EndGameListener {
-    private final TimerListener listener;
+    private TimerListener listener;
     private long startTime;
     private int currentGameTime;
     private Timer timer;
     private boolean isStop;
 
-    public TimeCounter(TimerListener listener) {
+    public TimeCounter() {
+    }
+
+    public void setListener(TimerListener listener) {
         this.listener = listener;
     }
 

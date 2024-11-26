@@ -2,22 +2,33 @@ package ru.shift.controller;
 
 import ru.shift.controller.interfaces.CellListener;
 import ru.shift.controller.interfaces.CreateNewGameListener;
+import ru.shift.controller.interfaces.EndGameListener;
 import ru.shift.controller.interfaces.TimerListener;
-import ru.shift.view.GameImage;
-import ru.shift.view.GameType;
-import ru.shift.view.MainWindow;
+import ru.shift.model.GameModel;
+import ru.shift.view.*;
 
 import static ru.shift.view.GameImage.getGameImage;
 
-public class ViewController implements CreateNewGameListener, CellListener, TimerListener {
-    MainWindow mainWindow;
+public class ViewController implements CreateNewGameListener, CellListener, EndGameListener, TimerListener {
+    private final MainWindow mainWindow;
+    private final SettingsWindow settingsWindow;
+    private final RecordController recordController;
+    private final GameModel gameModel;
+    private boolean winCheckComplete;
 
-    public ViewController(MainWindow mainWindow) {
+    public ViewController(MainWindow mainWindow, SettingsWindow settingsWindow,
+                          RecordController recordController, GameModel gameModel) {
         this.mainWindow = mainWindow;
+        this.settingsWindow = settingsWindow;
+        this.recordController = recordController;
+        this.gameModel = gameModel;
+        this.winCheckComplete = false;
     }
 
     @Override
     public void onCreateNewGame(GameType gameType) {
+        winCheckComplete = false;
+
         mainWindow.createGameField(gameType.getNumberRows(), gameType.getNumberColumns());
         mainWindow.setBombsCount(gameType.getNumberBomb());
         mainWindow.setVisible(true);
@@ -43,4 +54,38 @@ public class ViewController implements CreateNewGameListener, CellListener, Time
     public void onTimerUpdate(int seconds) {
         mainWindow.setTimerValue(seconds);
     }
+
+    @Override
+    public void onGameEnd() {
+        if (gameModel.checkWin()) {
+            if (!winCheckComplete) {
+                winCheckComplete = true;
+                checkNewRecord();
+            }
+            createWinWindow();
+        } else {
+            createLoseWindow();
+        }
+    }
+
+    public void checkNewRecord() {
+        RecordsWindow recordsWindow = new RecordsWindow(mainWindow);
+        recordsWindow.setNameListener(recordController);
+        recordsWindow.setVisible(true);
+    }
+
+    private void createWinWindow() {
+        WinWindow winWindow = new WinWindow(mainWindow);
+        winWindow.setNewGameListener(e -> settingsWindow.setVisible(true));
+        winWindow.setExitListener(e -> winWindow.setVisible(false));
+        winWindow.setVisible(true);
+    }
+
+    private void createLoseWindow() {
+        LoseWindow loseWindow = new LoseWindow(mainWindow);
+        loseWindow.setNewGameListener(e -> settingsWindow.setVisible(true));
+        loseWindow.setExitListener(e -> loseWindow.setVisible(false));
+        loseWindow.setVisible(true);
+    }
+
 }
