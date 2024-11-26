@@ -1,11 +1,12 @@
 package ru.shift.utils.constant;
 
 public class DefaultValues {
-    public static final int storageSize = 2;
-    public static final int producerCount = 2;
-    public static final int consumerCount = 2;
-    public static final int producerTime = 1000;
-    public static final int consumerTime = 1000;
-    public static final String nameProducer = "PRODUCER-";
-    public static final String nameConsumer = "CONSUMER-";
+    public static final int STORAGE_SIZE = 2;
+    public static final int PRODUCER_COUNT = 2;
+    public static final int CONSUMER_COUNT = 2;
+    public static final int PRODUCER_TIME = 1000;
+    public static final int CONSUMER_TIME = 1000;
+    public static final String PRODUCER_NAME = "PRODUCER-";
+    public static final String CONSUMER_NAME = "CONSUMER-";
 }
+

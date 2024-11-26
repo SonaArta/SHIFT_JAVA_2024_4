@@ -8,10 +8,9 @@ import java.util.Properties;
 
 public class PropertiesLoader {
     private PropertiesLoader() {
-
     }
 
-    public static PropertiesProgram loadProperties() throws IOException, ParsePropertiesException {
+    public static ApplicationProperties loadProperties() throws IOException, ParsePropertiesException {
         ClassLoader classLoader = PropertiesLoader.class.getClassLoader();
         InputStream name = classLoader.getResourceAsStream("config.properties");
         Properties properties = new Properties();
@@ -27,13 +26,18 @@ public class PropertiesLoader {
             int consumerCount = Integer.parseInt(properties.getProperty("consumerCount"));
             int producerTime = Integer.parseInt(properties.getProperty("producerTime"));
             int consumerTime = Integer.parseInt(properties.getProperty("consumerTime"));
-            String nameProducer = properties.getProperty("nameProducer");
-            String nameConsumer = properties.getProperty("nameConsumer");
+            String producerName = properties.getProperty("producerName");
+            String consumerName = properties.getProperty("consumerName");
 
-            return new PropertiesProgram(storageSize,
-                    producerCount, consumerCount,
-                    producerTime, consumerTime,
-                    nameProducer, nameConsumer);
+            return ApplicationProperties.builder()
+                    .storageSize(storageSize)
+                    .producerCount(producerCount)
+                    .consumerCount(consumerCount)
+                    .producerTime(producerTime)
+                    .consumerTime(consumerTime)
+                    .producerName(producerName)
+                    .consumerName(consumerName)
+                    .build();
         } catch (NumberFormatException e) {
             throw new ParsePropertiesException("Error format configuration");
         }

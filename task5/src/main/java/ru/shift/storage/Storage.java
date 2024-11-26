@@ -18,7 +18,7 @@ public class Storage {
         this.resourceQueue = new LinkedList<>();
     }
 
-    public int getCountResourceInStorage() {
+    public synchronized int getCountResourceInStorage() {
         return resourceQueue.size();
     }
 
@@ -32,12 +32,10 @@ public class Storage {
                         Thread.currentThread().getName(), idProducer);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                logger.error("The flow in the sleep state was interrupted.", e);
+                logger.error("The thread in the sleep state was interrupted.", e);
             }
         }
         resourceQueue.add(resource);
-        logger.info("A resource with ID = {} was added. There are {} resources in stock.\n",
-                resource.getId(), resourceQueue.size());
         notifyAll();
     }
 
@@ -51,7 +49,7 @@ public class Storage {
                         Thread.currentThread().getName(), idConsumer);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                logger.error("The flow in the sleep state was interrupted.", e);
+                logger.error("The thread in the sleep state was interrupted.", e);
             }
         }
         Resource takenResource = resourceQueue.poll();

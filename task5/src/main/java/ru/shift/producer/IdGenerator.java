@@ -6,7 +6,7 @@ class IdGenerator {
     private IdGenerator() {
     }
 
-    public static synchronized int generateId() {
+    static synchronized int generateId() {
         return id++;
     }
 }
