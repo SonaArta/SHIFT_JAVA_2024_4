@@ -8,5 +8,8 @@ public class DefaultValues {
     public static final int CONSUMER_TIME = 1000;
     public static final String PRODUCER_NAME = "PRODUCER-";
     public static final String CONSUMER_NAME = "CONSUMER-";
+
+    private DefaultValues() {
+    }
 }
 

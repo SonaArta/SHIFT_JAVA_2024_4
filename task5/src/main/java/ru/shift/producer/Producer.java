@@ -22,7 +22,7 @@ public class Producer implements Runnable {
     public void run() {
         logger.info("\"{}\" with ID = {} is start\n", Thread.currentThread().getName(), id);
 
-        while (true) {
+        while (!Thread.currentThread().isInterrupted()) {
             Resource newResource = new Resource();
             logger.info("\"{}\" create resource with ID = {}", Thread.currentThread().getName(), newResource.getId());
 

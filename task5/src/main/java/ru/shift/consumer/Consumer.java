@@ -23,7 +23,7 @@ public class Consumer implements Runnable {
         logger.info("\"{}\" with ID = {} is start\n",
                 Thread.currentThread().getName(), id);
 
-        while (true) {
+        while (!Thread.currentThread().isInterrupted()) {
             Resource takenResource = storage.take(id);
             logger.info("A resource with ID = {} was taken away. There are {} resources in stock.\n",
                     takenResource.getId(), storage.getCountResourceInStorage());
